@@ -45,6 +45,9 @@ do_backup() {
     backup_return_code="$?"
     popd
 
+    # fix unmount dir because data disk not in /home
+    for i in $(mount | grep /data/yunohost.backup/ | cut -d' ' -f3); do umount $i; done
+
     # On ne nettoie que si la sauvegarde s'est bien passee
     if [ "$backup_return_code" -eq "0" ];then
         $RESTIC_COMMAND forget --keep-daily 7 --keep-weekly 8 --keep-monthly 12 > >(tee -a $LOGFILE) 2> >(tee -a $ERRFILE >&2)
