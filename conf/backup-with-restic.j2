@@ -28,13 +28,13 @@ filter_hooks() {
 # Backup system part conf
 conf=$(yunohost app setting {{ app }} conf)
 if [ $conf -eq 1 ];then
-  yunohost backup create $ignore_apps -n auto_conf --method {{ app }}_app --system $(filter_hooks conf)
+  yunohost backup create $ignore_apps -n `/bin/hostname -s`_auto_conf --method {{ app }}_app --system $(filter_hooks conf)
 fi
 
 # Backup system data
 data=$(yunohost app setting {{ app }} data)
 if [ $data -eq 1 ];then
-  yunohost backup create $ignore_apps -n auto_data --method {{ app }}_app --system $(filter_hooks data)
+  yunohost backup create $ignore_apps -n `/bin/hostname -s`_auto_data --method {{ app }}_app --system $(filter_hooks data)
 fi
 
 # Backup all apps independently
@@ -48,7 +48,7 @@ for app in $(ls /etc/yunohost/apps/*/scripts/backup | cut -d / -f 5); do
     fi
   done
   if [ "$backup_app" == "true" ];then
-    yunohost backup create $ignore_system -n auto_$app --method {{ app }}_app --apps $app
+    yunohost backup create $ignore_system -n `/bin/hostname -s`_auto_$app --method {{ app }}_app --apps $app
   fi
 done
 rm "$LOCK_FILE"
